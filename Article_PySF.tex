@@ -8,6 +8,7 @@
 \usepackage{amsmath,amssymb,graphicx,xcolor,stix2,bm,listings,braket}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage[htt]{hyphenat}
+\usepackage{ulem}   % for \sout feature
 \biboptions{square,numbers,comma,sort&compress}
 
 % math style
@@ -21,8 +22,8 @@
 \newcommand{\ee}{\mathrm{e}}    % roman e (exp)
 \newcommand{\abs}[1]{\lvert #1 \rvert}  % abs symbol
 % color
-% \newcommand{\cyan}[1]{\textcolor{cyan}{#1}}     % revision
-% \newcommand{\cout}[1]{\textcolor{cyan}{\sout{#1}}}
+\newcommand{\cyan}[1]{\textcolor{cyan}{#1}}     % revision
+\newcommand{\cout}[1]{\textcolor{cyan}{\sout{#1}}}
 % \newcommand{\blue}[1]{\textcolor{blue}{#1}}
 % \newcommand{\red}[1]{\textcolor{red}{#1}}
 
@@ -50,7 +51,7 @@
 \fntext[contrib]{These authors contributed equally.}
 
 \begin{abstract}
-Tunneling ionization is at the core of strong-field and attosecond science. In this paper, we present \texttt{PyStructureFactor} --- a general \texttt{Python} code towards the calculation of the structure factor in the tunneling ionization rate of common molecules under intense laser fields. The numerical implementation is based on the well-developed weak-field asymptotic theory in the integral representation. The information of the electronic structure of the molecules is obtained via the \texttt{PySCF} quantum chemistry package. \texttt{PyStructureFactor} is a general computational framework that can be utilized to compute the molecular structure factor of various types of molecules, including polar and nonpolar diatomic molecules, degenerate molecules, and multiplet molecules. Examples are given that are benchmarked against known results with good agreements. The present \texttt{PyStructureFactor} is implemented in an efficient manner and is easily applicable towards larger molecules.
+Tunneling ionization is at the core of strong-field and attosecond science. In this paper, we present \texttt{PyStructureFactor} --- a general \texttt{Python} code towards the calculation of the structure factor in the tunneling ionization rate of common molecules under intense laser fields. The numerical implementation is based on the well-developed weak-field asymptotic theory in the integral representation. The information of the electronic structure of the molecules is obtained via the \texttt{PySCF} quantum chemistry package. \texttt{PyStructureFactor} is a general computational framework that can be utilized to compute the molecular structure factor of various types of molecules, including polar and nonpolar diatomic molecules, degenerate molecules, and \cout{multiplet} \cyan{open-shell} molecules. Examples are given that are benchmarked against known results with good agreements. The present \texttt{PyStructureFactor} is implemented in an efficient manner and is easily applicable towards larger molecules.
 \end{abstract}
 
 \begin{keyword}
@@ -59,7 +60,7 @@ Molecular structure factor; Tunneling ionization; Weak-field asymptotic theory; 
 
 \end{frontmatter}
 
-{\bf PROGRAM SUMMARY}
+{\bf \noindent PROGRAM SUMMARY} \\
 \begin{small}
 \noindent
 {\em Program Title:} PyStructureFactor \\
@@ -71,8 +72,8 @@ Molecular structure factor; Tunneling ionization; Weak-field asymptotic theory; 
 {\em Supplementary material:}                                 \\
 {\em Nature of problem:} The structure factor of a molecule in intense laser fields determines its orientation-dependent tunneling ionization rate, which is crucial for the studies of ultrafast molecular dynamics and its control. However, the strong-field community lacks an open-source code to calculate the molecular structure factor, and can only resort to known results of a few molecules. \\
 {\em Solution method:} We develope the \texttt{PyStructureFactor} program with the structure factor of arbitrary molecules calculated using the weak-field asymptotic theory in the integral representation. The underlying electronic structure necessary for the calculation is obtained using the \texttt{PySCF} quantum chemistry package. \\
-  %Describe the method solution here.
 {\em Restrictions on the Accuracy:} The accuracy of the molecular structure factor calculated by \texttt{PyStructureFactor} is restricted by the level of precision of the electronic structure information extracted from the \texttt{PySCF} package. \\
+\cyan{{\em Running time:} The running time depends on the size of the molecule and the basis set of the SCF calculation and other parameters passed to the program. The example in Fig.~\ref{fig:code_example} took 1.2 sec. on an AMD Ryzen 9 7950X CPU on the WSL Ubuntu 22.04 LTS.}
 \end{small}
 
 
@@ -88,17 +89,17 @@ In contrast to photoionization where the laser is manifested as photons in the f
     W[F(t)] \sim \ee^{-2\kappa^3/3F(t)}
     \label{eq:FieldFactor}
 \end{equation}
-depending exponentially on the field strength $F(t)$, where $\kappa=\sqrt{-2E_0}$ with $E_0$ the energy of the ionizing electron. For typical intense infrared laser fields, the photon energy is substantially lower than the ionization potential of the bound electron. Moreover, the timescale of the field oscillation is much longer than the intrinsic attosecond timescale of the bound electron. Therefore, the strong-field ionization process can be approximated by tunneling in a static electric field represented by the instantaneous laser electric field $F(t)$ \cite{tolstikhin_adiabatic_2010, tolstikhin_adiabatic_2012}.
+depending exponentially on the field strength $F(t)$, where $\kappa=\sqrt{-2E_0}$ with $E_0$ \cyan{the orbital energy of the target}. For typical intense infrared laser fields, the photon energy is substantially lower than the ionization potential of the bound electron. Moreover, the timescale of the field oscillation is much longer than the intrinsic attosecond timescale of the bound electron. Therefore, the strong-field ionization process can be approximated by tunneling in a static electric field represented by the instantaneous laser electric field $F(t)$ \cite{tolstikhin_adiabatic_2010, tolstikhin_adiabatic_2012}.
 
 In addition to the field factor [Eq.~(\ref{eq:FieldFactor})], the tunneling ionization rate of molecules depends on a factor related to the electronic structure of the ionizing orbital, known as the molecular structure factor. It determines the orientation-dependent rate of tunneling ionization that is crucial to the analysis of subsequent strong-field molecular dynamics and photoelectron spectrum \cite{pavicic_direct_2007}. It is the aim of the current work to present the numerical solution to the molecular structure factor.
 
-The molecular structure factor can be obtained either by the molecular Ammosov--Delone--Krainov theory (MO-ADK) \cite{tong_theory_2002, pavicic_direct_2007, holmegaard_photoelectron_2010, johansen_alignment-dependent_2016, zhao_accurate_2017} or via the weak-field asymptotic theory (WFAT) \cite{tolstikhin_theory_2011, madsen_application_2012}. WFAT is applicable in laser fields below the critical field strength that leads to over-barrier ionization. Based on the parabolic adiabatic expansion approach \cite{batishchev_atomic_2010}, WFAT generalizes isotropic atomic potentials to arbitrary molecular potentials and naturally accounts for the effect of molecular permanent dipole moment (if any). In this work, we employ WFAT towards a numerical implementation of the computation of the molecular structure factor. Under its framework, the obtained tunneling ionization rate, in its leading order, factorizes into the field factor [Eq.~(\ref{eq:FieldFactor})] and the absolute square of the structure factor, the latter of which is an inherent property of the ionizing molecular orbital independent of the external field \cite{trinh_first-order_2013}.
+The molecular structure factor can be obtained either by the molecular Ammosov--Delone--Krainov theory (MO-ADK) \cite{tong_theory_2002, pavicic_direct_2007, holmegaard_photoelectron_2010, johansen_alignment-dependent_2016, zhao_accurate_2017} or via the weak-field asymptotic theory (WFAT) \cite{tolstikhin_theory_2011, madsen_application_2012, madsen_structure_2013, trinh_first-order_2013, madsen_application_2014, tolstikhin_weak-field_2014, tolstikhina_application_2014, saito_structure_2015, trinh_weak-field_2015, dnestryan_integral-equation_2016, svensmark_theory_2016, trinh_first-order_2016, madsen_structure_2017, dnestryan_structure_2018, samygin_weak-field_2018, matsui_weak-field_2021}. WFAT is applicable in laser fields below the critical field strength that leads to over-barrier ionization. Based on the parabolic adiabatic expansion approach \cite{batishchev_atomic_2010}, WFAT generalizes isotropic atomic potentials to arbitrary molecular potentials and naturally accounts for the effect of molecular permanent dipole moment (if any), \cyan{and has been adopted as the theoretical method in some experimental research on molecular strong-field ionization \cite{ohmura_molecular_2014, kraus_observation_2015, walt_role_2015, endo_imaging_2016, fujise_helicity-dependent_2022}}. In this work, we employ WFAT towards a numerical implementation of the computation of the molecular structure factor. Under its framework, the obtained tunneling ionization rate, in its leading order, factorizes into the field factor [Eq.~(\ref{eq:FieldFactor})] and the absolute square of the structure factor, the latter of which is an inherent property of the ionizing molecular orbital independent of the external field \cite{trinh_first-order_2013}.
 
-In an essence of the perturbation theory, the structure factor of WFAT is taken as the asymptotic expansion for the field strength in early stages, known as the tail representation \cite{madsen_structure_2013, trinh_weak-field_2015, madsen_application_2014}. Hence, its reliable evaluation requires an accurate description of the asymptotic tail of the ionizing orbital. To extract the orbital wave function of polyatomic molecules by the Hartree-Fock (HF) method or density functional theory (DFT) with quantum chemistry software packages \cite{madsen_application_2014, saito_structure_2015}, one normally resorts to the basis-based approaches. However, compared to the correct exponential behavior obtained by the grid-based approach, the standard Gaussian-type basis functions facilitating multicenter integral calculations decay too rapidly in the asymptotic region and thus could result in erratic oscillations. To reproduce the correct local property of the asymptotic tail of the orbital, large basis sets with quadruple or pentuple-zeta quality and variationally optimized exponents are required \cite{trinh_first-order_2013}. This approach significantly increases the computational cost and become infeasible in many cases. The efficiency of such numerical computation needs to be improved urgently.
+In an essence of the perturbation theory, the structure factor of WFAT is \cout{taken as the asymptotic expansion for the field strength} \cyan{found through the behavior of the wave function in the asymptotic region} in early stages, known as the tail representation \cite{madsen_structure_2013, trinh_weak-field_2015, madsen_application_2014}. Hence, its reliable evaluation requires an accurate description of the asymptotic tail of the ionizing orbital. To extract the orbital wave function of polyatomic molecules by the Hartree-Fock (HF) method or density functional theory (DFT) with quantum chemistry software packages \cite{madsen_application_2014, saito_structure_2015}, one normally resorts to the basis-based approaches. However, compared to the correct exponential behavior obtained by the grid-based approach, the standard Gaussian-type basis functions facilitating multicenter integral calculations decay too rapidly in the asymptotic region and thus could result in erratic oscillations. To reproduce the correct local property of the asymptotic tail of the orbital, large basis sets with quadruple or pentuple-zeta quality and variationally optimized exponents are required \cite{trinh_first-order_2013}. This approach significantly increases the computational cost and become infeasible in many cases. The efficiency of such numerical computation needs to be improved urgently.
 
-As a remedy, an alternative integral approach of WFAT was developed with the spirit of scattering theory to overcome the above issue \cite{dnestryan_structure_2018, samygin_weak-field_2018}. In this approach, the structure factor is expressed as an integral form involving the ionizing orbital and a known analytical function. The integral accumulates at the localized regions where the orbital has large amplitudes, and it is insensitive to the representation of the asymptotic tail far from the nuclei. Hence, the integral approach can be implemented using standard quantum chemistry software packages with Gaussian-type orbitals (GTOs) for arbitrary molecules.
+As a remedy, an alternative integral approach of WFAT was developed with the spirit of scattering theory to overcome the above issue \cite{madsen_structure_2017, dnestryan_structure_2018, samygin_weak-field_2018}. In this approach, the structure factor is expressed as an integral form involving the ionizing orbital and a known analytical function. The integral accumulates at the localized regions where the orbital has large amplitudes, and it is insensitive to the representation of the asymptotic tail far from the nuclei. Hence, the integral approach can be implemented using standard quantum chemistry software packages with Gaussian-type orbitals (GTOs) for arbitrary molecules.
 
-In this work, an open-source program implementing WFAT in the integral representation is developed that can easily and quickly calculate the molecular structure factor of common molecules. In our implementation, named the \texttt{PyStructureFactor}, the ionizing molecular orbital is expanded as a linear combination of GTOs at the HF level of theory calculated by the \texttt{PySCF} package \cite{sun_pyscf_2018, sun_recent_2020}. The integrals are evaluated numerically using a three-dimensional grid-based method, which exhibits much better numerical stability and is readily applicable to large molecules, compared to the standard analytical integration procedure. Our present implementation of \texttt{PyStructureFactor} features high accuracy and efficient computation towards the calculation of the molecular structure factor.
+In this work, an open-source program implementing WFAT in the integral representation is developed that can easily and quickly calculate the molecular structure factor of common molecules. In our implementation, named the \texttt{PyStructureFactor}, the ionizing molecular orbital is expanded as a linear combination of GTOs at the HF level of theory calculated by the \texttt{PySCF} package \cite{sun_pyscf_2018, sun_recent_2020}. The integrals are evaluated numerically using a three-dimensional grid-based method, which exhibits much better numerical stability and is readily applicable to large molecules, compared to the standard analytical integration procedure. Our present implementation of \texttt{PyStructureFactor} features \cout{high accuracy and} efficient computation towards the calculation of the molecular structure factor.
 
 This work is organized as follows. In Sec.~\ref{sec:theory}, the definition and derivation of the tunneling ionization rate, the molecular structure factor, and other parameters within the WFAT framework are given. In Sec.~\ref{sec:numerical}, the details of numerical implementation are presented. In Sec.~\ref{sec:usage}, we detail the usage of the \texttt{PyStructureFactor} program to calculate the molecular structure factor. In Sec.~\ref{sec:example}, we illustrate the application of the \texttt{PyStructureFactor} program with examples of various types of common molecules. Conclusions are given in Sec.~\ref{sec:concl}. Atomic units are used throughout unless stated otherwise.
 
@@ -110,11 +111,20 @@ This work is organized as follows. In Sec.~\ref{sec:theory}, the definition and 
 
 Tunneling ionization of molecules can be usually modeled within the Born-Oppenheimer and the single-active-electron approximation. Under such a framework, the wave function of the ionizing orbital $\psi_0$ is the solution to an effective one-electron Schr\"{o}dinger equation
 \begin{equation}
-    \left[-\frac12\nabla^2 + \hat{V}(\bn{r})\right] \psi_0(\bn{r}) = E_0 \psi_0(\bn{r}),
+    \left[-\frac12\nabla^2 + \cyan{V}(\bn{r})\right] \psi_0(\bn{r}) = E_0 \psi_0(\bn{r}),
 \end{equation}
-where the HF potential $\hat{V}(\bn{r})$ describes the interaction between the ionizing electron and the parent ion.
+where the HF potential $\cyan{V}(\bn{r})$ describes the interaction between the ionizing electron and the parent ion.
 
-Within WFAT, tunneling ionization is investigated in parabolic coordinates. We assume the electric field vector $\bn{F}=F\hat{\bn{z}}$, and define the orientation of the molecule using a set of Euler angles $(\alpha,\beta,\gamma)$ (within the $z$-$y'$-$z''$ convention \cite{madsen_structure_2017}) representing a rotation $\hat{\bn{R}}$ from the laboratory frame (LF) to the molecular frame (MF). The ionization rate does not depend on $\alpha$ and so we set $\alpha=0$ throughout. The total ionization rate is split into different parabolic channels:
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{Euler_Angle_20230706.pdf}
+    \caption{\cyan{
+        Illustration of the rotation from the LF to the MF using Euler angles of $z$-$y'$-$z''$ convention. The rotation consists of three steps: (1) The coordinate system $(x,y,z)$ rotates about the $z$ axis by angle $\alpha$, then (2) rotates about the new $y$ axis by angle $\beta$, finally (3) rotates about the rotated $z$ axis by $\gamma$, and becomes $(X,Y,Z)$. The rotations mentioned above are all counter-clockwise.
+        }}
+    \label{fig:EulerAngle}
+\end{figure}
+
+Within WFAT, tunneling ionization is investigated in parabolic coordinates. We assume the electric field vector $\bn{F}=F\hat{\bn{z}}$, and define the orientation of the molecule using a set of Euler angles $(\alpha,\beta,\gamma)$ (within the $z$-$y'$-$z''$ convention \cite{madsen_structure_2017}, \cyan{which is shown schematically in Fig.~\ref{fig:EulerAngle}}) representing a rotation $\hat{\bn{R}}$ from the laboratory frame (LF) to the molecular frame (MF). The ionization rate does not depend on $\alpha$ and so we set $\alpha=0$ throughout. The total ionization rate is split into different parabolic channels:
 \begin{equation}
     \Gamma(\beta, \gamma)=\sum_\nu \Gamma_\nu(\beta, \gamma),
 \end{equation}
@@ -131,9 +141,9 @@ The field factor, $W_{\nu}(F)$, has the form \cite{ammosov_tunnel_1986,delone_tu
 \begin{equation}
     W_{\nu}(F) = \frac{\kappa}{2} \left(\frac{4\kappa^2}{F}\right)^{2Z/\kappa-2n_\xi-\abs{m}-1} \ee^{-{2\kappa^3}/{3F}}.
 \end{equation}
-The structure factor, namely $G_\nu(\beta, \gamma)$, in the integral representation, is given as an integral:
+The structure factor, namely $G_\nu(\beta, \gamma)$, in the integral representation \cyan{of WFAT}, is given as an integral:
 \begin{equation}
-    G_\nu (\beta,\gamma) = \ee^{-\kappa\mu_z} \int \Omega_\nu^* \left(\hat{\bn{R}}^{-1} \bn{r}\right) \hat{V}_{\rm{c}}(\bn{r}) \psi_0(\bn{r}) \dd \bn{r},
+    G_\nu (\beta,\gamma) = \ee^{-\kappa\mu_z} \int \Omega_\nu^* \left(\hat{\bn{R}}^{-1} \bn{r}\right) \cyan{V}_{\rm{c}}(\bn{r}) \psi_0(\bn{r}) \dd \bn{r},
     \label{eq:StructFactorExp}
 \end{equation}
 where
@@ -151,7 +161,7 @@ where
     \Omega^\nu_{lm}(\bn{r}) = \sum_{l=|m|}^{\infty} R_l^\nu(r) Y_{lm}(\theta, \phi);
     \label{eq:OmegaExpansion2}
 \end{equation}
-$\hat{V}_{\rm{c}}(\bn{r}) = \hat{V}(\bn{r}) + Z/r$ is the core potential without the Coulomb tail (i.e., $\hat{V}_{\rm{c}} \rightarrow 0$ as $r\rightarrow \infty$) with $Z$ the asymptotic charge of the parent molecular ion.
+$\cyan{V}_{\rm{c}}(\bn{r}) = \cyan{V}(\bn{r}) + Z/r$ is the core potential without the Coulomb tail (i.e., $\cyan{V}_{\rm{c}} \rightarrow 0$ as $r\rightarrow \infty$) with $Z$ the asymptotic charge of the parent molecular ion.
 The radial part $R_l^\nu$ of the reference function $\Omega_{lm}^\nu$ in Eq.~(\ref{eq:OmegaExpansion2}) reads
 \begin{equation}
     R_l^\nu(r)=\omega_l^\nu \ (\kappa r)^l \ \ee^{-\kappa r} \ \rm{M}(l+1-Z/\kappa, 2l+2, 2 \kappa r),
@@ -163,15 +173,15 @@ where $\rm{M}(a, b, x)$ is the confluent hyper-geometric function \cite{olver_ni
                    & \times \!\!\!\!\!\! \sum_{k=0}^{\min{(n_\xi,l-\abs{m})}} \!\!\!\!\!\!\!\!\!\! \frac{\Gamma(l+1-Z/\kappa+n\xi-k)}{k!(l-k)!(\abs{m}+k)!(l-\abs{m}-k)!(n_\xi-k)!}.
 \end{align}
 
-Under the framework of the HF method, the HF potential $\hat{V}(\bn{r})$ consists of three parts, namely the nuclear Coulomb potential ($V_{\rm{nuc}}$), the direct ($V_{\rm{d}}$) and exchange ($V_{\rm{ex}}$) parts of inter-electron interactions:
+Under the framework of the HF method, the HF potential $\cyan{V}(\bn{r})$ consists of three parts, namely the nuclear Coulomb potential ($V_{\rm{nuc}}$), the direct ($V_{\rm{d}}$) and exchange ($V_{\rm{ex}}$) parts of inter-electron interactions:
 \begin{equation}
-    \hat{V}(\bn{r}) = V_{\rm{nuc}}(\bn{r}) + V_{\rm{d}}(\bn{r}) + \hat{V}_{\rm{ex}}(\bn{r}),
+    \cyan{V}(\bn{r}) = V_{\rm{nuc}}(\bn{r}) + V_{\rm{d}}(\bn{r}) + \cyan{V}_{\rm{ex}}(\bn{r}),
 \end{equation}
 where
 \begin{align}
     V_{\rm{nuc}}(\bn{r}) &= -\sum_{A=1}^{N_{\rm{atm}}} \frac{Z_A}{\left|\bn{r}-\bn{R}_A\right|}, \label{eq:Vnuc} \\
     V_{\rm{d}}(\bn{r}) &= \sum_{i=1}^N \int \frac{\psi_i^*(\bn{r}') \psi_i(\bn{r}')}{\abs{\bn{r}-\bn{r}'}} \dd \bn{r}', \label{eq:Vd} \\
-    \hat{V}_{\rm{ex}}(\bn{r}) \psi_0(\bn{r}) &= -\sum_{i=1}^N \psi_i(\bn{r}) \int \frac{\psi_i^*(\bn{r}') \psi_0(\bn{r}')}{\abs{\bn{r}-\bn{r}'}} \braket{\sigma_i | \sigma_0} \dd \bn{r}', \label{eq:VexPsi0}
+    \cyan{V}_{\rm{ex}}(\bn{r}) \psi_0(\bn{r}) &= -\sum_{i=1}^N \psi_i(\bn{r}) \int \frac{\psi_i^*(\bn{r}') \psi_0(\bn{r}')}{\abs{\bn{r}-\bn{r}'}} \braket{\sigma_i | \sigma_0} \dd \bn{r}', \label{eq:VexPsi0}
 \end{align}
 where $N$ is the number of electrons, $N_{\rm{atm}}$ is the number of nuclei, $\psi_i(\bn{r})$ and $\sigma_i$ denote the molecular orbital and the spin state of the electron of index $i$ ($\braket{\sigma_i | \sigma_j}=1$ if electrons $i$ and $j$ have the same spin, and $\braket{\sigma_i | \sigma_j}=0$ otherwise), while $Z_A$ and $\bn{R}_A$ are the nuclear charge and position of atom of index $A$.
 
@@ -184,15 +194,16 @@ where $N$ is the number of electrons, $N_{\rm{atm}}$ is the number of nuclei, $\
 For the practical numerical implementation of the computation of the molecular structure factor within the framework of WFAT, we first refer to the evaluation of the integral in Eq.~(\ref{eq:StructFactorExp}). Directly evaluating the integrals for each molecular orientation $(\beta,\gamma)$ is inefficient. Nevertheless, we may utilize the spherical harmonic expansion of the reference function $\Omega_\nu$, and express the rotated spherical harmonic functions as a linear combination of spherical harmonic functions using the Wigner-$d$ matrix. Substituting Eqs.~(\ref{eq:OmegaExpansion1}) and (\ref{eq:OmegaExpansion2}) into Eq.~(\ref{eq:StructFactorExp}) yields \cite{madsen_structure_2017}
 \begin{equation}
     G_\nu(\beta,\gamma) = \ee^{-\kappa \mu_z} \sum_{l=|m|}^{\infty} \sum_{m'=-l}^l I_{l m'}^\nu  d_{m m'}^l(\beta) e^{-\ii m' \gamma},
+    \label{eq:StructFactorExpInt}
 \end{equation}
 where $d_{m m'}^l(\beta)$ is the Wigner-$d$ matrix, and the integral $I_{l m'}^\nu$ is expressed as
 \begin{equation}
-    I_{l m'}^\nu = \int \Omega_{l m'}^{\nu *}(\bn{r}) \hat{V}_{\rm{c}}(\bn{r}) \psi_0(\bn{r}) \dd \bn{r}.
+    I_{l m'}^\nu = \int \Omega_{l m'}^{\nu *}(\bn{r}) \cyan{V}_{\rm{c}}(\bn{r}) \psi_0(\bn{r}) \dd \bn{r}.
     \label{eq:IntegralExpr}
 \end{equation}
 In this way the computational overhead is significantly reduced --- with the values of the integrals $I_{l m'}^\nu$, we may obtain the structure factor of arbitrary molecular orientation $G_\nu(\beta,\gamma)$ with little computational cost.
 
-The next topic is concerned with the calculation of the HF potential operator acting on the ionizing orbital, i.e., $\hat{V}(\bn{r}) \psi_0(\bn{r})$. In the practical application, the molecular orbitals are usually obtained by the self-consistent-field (SCF) approach, which is commonly implemented in standard quantum chemistry packages. The molecular orbitals are usually expanded into linear combinations of Gaussian-type orbitals (GTOs):
+The next topic is concerned with the calculation of the HF potential operator acting on the ionizing orbital, i.e., $\cyan{V}(\bn{r}) \psi_0(\bn{r})$. In the practical application, the molecular orbitals are usually obtained by the self-consistent-field (SCF) approach, which is commonly implemented in standard quantum chemistry packages. The molecular orbitals are usually expanded into linear combinations of Gaussian-type orbitals (GTOs):
 \begin{equation}
     \psi_i(\bn{r})=\sum_\alpha C_{i \alpha} \chi_\alpha(\bn{r}-\bn{R}_\alpha),
 \end{equation}
@@ -205,12 +216,13 @@ which can be calculated analytically for GTOs,
 Eqs.~(\ref{eq:Vd}) and (\ref{eq:VexPsi0}) can be written as
 \begin{align}
      V_{\rm{d}}(\bn{r}) &= \sum_{i=1}^{N} \sum_{\alpha,\beta} C_{i\alpha} C_{i\beta} J_{\alpha\beta}(\bn{r}), \\
-    \hat{V}_{\rm{ex}}(\bn{r})\psi_0(\bn{r}) &= - \sum_{i=1}^{N} \braket{\sigma_i | \sigma_0} \sum_{\alpha,\beta,\gamma} C_{i\alpha} C_{i\beta} C_{0\gamma} J_{\beta\gamma}(\bn{r}) \chi_\alpha(\bn{r}-\bn{R}_\alpha).
+     \cyan{V}_{\rm{ex}}(\bn{r})\psi_0(\bn{r}) &= - \sum_{i=1}^{N} \braket{\sigma_i | \sigma_0} \sum_{\alpha,\beta,\gamma} C_{i\alpha} C_{i\beta} C_{0\gamma} J_{\beta\gamma}(\bn{r}) \chi_\alpha(\bn{r}-\bn{R}_\alpha).
 \end{align}
 
 The last topic is related to the convergence of the algorithm. The integral in Eq.~(\ref{eq:IntegralExpr}) is numerically evaluated on a grid using the Becke fuzzy cell integration scheme \cite{becke_multicenter_1988} implemented in the \texttt{PySCF} package, which uses higher density of grid points near the nuclei to accelerate convergence of the calculation. Apart from adopting the Becke grids in the numerical integration, we also choose the origin such that the dipole of the parent ion
 \begin{equation}
     \bn{D} = \left[\sum_{A=1}^{N_{\rm{atm}}} Z_A \bn{R}_A - \sum_{i=1}^N \int \psi_i^*(\bn{r}) \bn{r} \psi_i(\bn{r}) \dd \bn{r} \right] - \bi{\mu}
+    \label{eq:ParentIonDipole}
 \end{equation}
 vanishes, which reduces the grid size required for the integral Eq.~(\ref{eq:IntegralExpr}) to converge.
 
@@ -221,8 +233,9 @@ vanishes, which reduces the grid size required for the integral Eq.~(\ref{eq:Int
 % ==========================
 
 \begin{table}[tb]
+    \small
     \centering
-    \begin{tabular}{l p{12cm} l}
+    \begin{tabular}{l p{9cm} l}
         \hline \hline
         Parameter                   & Description                                                                                       & Default\\
         \hline
@@ -242,32 +255,44 @@ vanishes, which reduces the grid size required for the integral Eq.~(\ref{eq:Int
 \end{table}
 
 \begin{table}[tb]
+    \small
     \centering
-    \begin{tabular}{l p{12cm} l}
+    \begin{tabular}{l p{9cm} l}
         \hline \hline
         Parameter                   & Description                                                                                               & Default           \\
         \hline
         \texttt{mol}                & The \texttt{PySCF} molecule object. Initialized by invoking \texttt{pyscf.M} or
-                                      \href{https://pyscf.org/pyscf_api_docs/pyscf.gto.html#module-pyscf.gto.mole}{\texttt{pyscf.gto.M}}.       & ---               \\
+                                      \href{https://pyscf.org/pyscf_api_docs/pyscf.gto.html#module-pyscf.gto.mole}{\texttt{pyscf.gto.M}}.
+                                                                                                                                                & ---               \\
         \texttt{orbital\_index}     & Index of the ionizing orbital relative to HOMO, e.g., $\rm{HOMO} \rightarrow 0$,
-                                      $\rm{LUMO} \rightarrow +1$, $\rm{HOMO-1} \rightarrow -1$, …                                               & \texttt{0}        \\
-        \texttt{channel}            & Parabolic channel $\nu=(n_\xi, m)$.                                                                       & \texttt{(0,0)}    \\
-        \texttt{lmax}               & The maximum angular quantum number (larger $l$ would be neglected) used in the sum.                       & \texttt{10}       \\
+                                      $\rm{LUMO} \rightarrow +1$, $\rm{HOMO-1} \rightarrow -1$, …
+                                                                                                                                                & \texttt{0}        \\
+        \texttt{channel}            & Parabolic channel $\nu=(n_\xi, m)$.
+                                      \cyan{The program would calculate the structure factor of channel $(n_\xi, m)$, i.e., $G_{n_\xi,m}$.}
+                                                                                                                                                & \texttt{(0,0)}    \\
+        \texttt{lmax}               & The \cout{maximum} \cyan{cut-off limit of the} angular quantum number (larger $l$ would be neglected)
+                                      used in the summation \cyan{in Eq.~(\ref{eq:StructFactorExpInt})}.
+                                                                                                                                                & \texttt{10}       \\
         \texttt{hf\_method}         & Indicates whether \texttt{'RHF'} or \texttt{'UHF'} should be used in the molecular HF calculation.
-                                      Note: \texttt{'UHF'} must be used for multiplet molecules.                                                & \texttt{'RHF'}    \\
+                                      Note: \texttt{'UHF'} must be used for \cout{multiplet} \cyan{open-shell} molecules.
+                                                                                                                                                & \texttt{'RHF'}    \\
         \texttt{atom\_grid\_level}  & Level of fineness of the grid used in integration
                                       (see also \href{https://pyscf.org/pyscf_api_docs/pyscf.dft.html#module-pyscf.dft.gen_grid}{\texttt{pyscf.dft.Grid}}),
-                                      which controls the number of radial and angular grids, ranging from 0 to 9.                               & \texttt{3}        \\
+                                      which controls the number of radial and angular grids, ranging from 0 to 9.
+                                                                                                                                                & \texttt{3}        \\
         \texttt{orient\_grid\_size} & Size of the output $(\beta,\gamma)$ grid.
                                       The grid is uniform, with $\beta$ ranging from $0$ to $\pi$ and $\gamma$ ranging from $0$ to $2\pi$.
-                                      Setting the $\gamma$ grid count to $1$ indicates that $\gamma$ would be zero throughout the calculation.  & \texttt{(90,1)}   \\
-        \texttt{move\_dip\_zero}    & Indicates whether to shift the molecular coordinates such that its dipole moment vanishes
-                                      (i.e., $\bn{D}=\bn{0}$).                                                                                  & \texttt{True}     \\
+                                      Setting the $\gamma$ grid count to $1$ indicates that $\gamma$ would be zero throughout the calculation.
+                                                                                                                                                & \texttt{(90,1)}   \\
+        \texttt{move\_dip\_zero}    & Indicates whether to shift the molecular coordinates such that its dipole moment \cyan{[Eq. (\ref{eq:ParentIonDipole})]} vanishes
+                                      (i.e., $\bn{D}=\bn{0}$).
+                                                                                                                                                & \texttt{True}     \\
         \texttt{rmax}               & Indicates the cut-off limit of the radial grid points,
-                                      points of radii larger than \texttt{rmax} would be neglected in the calculation.                          & \texttt{40}       \\
+                                      points of radii larger than \texttt{rmax} would be neglected in the calculation.
+                                                                                                                                                & \texttt{40}       \\
         \hline
         Returns                     & A \texttt{NumPy} array containing the structure factor $G_{n_\xi,m}$ of the given channel $(n_\xi,m)$
-                                      on the $(\beta,\gamma)$ orientation grid, whose shape is initialized from \texttt{orient\_grid\_size}. \\
+                                      on the $(\beta,\gamma)$ orientation grid, whose shape is \cout{initialized from} \cyan{given by the} \texttt{orient\_grid\_size}. \\
         \hline \hline
     \end{tabular}
     \caption{Input parameters and return value of the \texttt{PyStructureFactor.get\_structure\_factor} method.}
@@ -292,16 +317,17 @@ n_beta  = 90
 n_gamma = 1
 molH2 = pyscf.M(atom="H 0,0,0.37; H 0,0,-0.37", basis="pc-1", spin=0)
 beta_grid = np.linspace(0, np.pi, n_beta)
-G_grid = get_structure_factor(mol = molH2, orbital_index = 0, channel = (0,0),
-                              lmax = 10, hf_method = "RHF",
-                              atom_grid_level = 3,
-                              orient_grid_size = (n_beta, n_gamma))
+G_grid = get_structure_factor(
+            mol = molH2, orbital_index = 0, channel = (0,0),
+            lmax = 10, hf_method = "RHF",
+            atom_grid_level = 3,
+            orient_grid_size = (n_beta, n_gamma))
     \end{lstlisting}
     \caption{A minimal example of the program calculating the structure factor $G_{00}(\beta)$ of the HOMO of the hydrogen molecule ($\rm{H}_2$).}
     \label{fig:code_example}
 \end{figure}
 
-Now we present convergence and reliability tests of the program in Figs.~\ref{fig:convtest_N2} and \ref{fig:convtest_CO} with N$_2$ and CO molecules, respectively. To this end, we obtain their structure factors as a function of $\beta$ and compare the results to reference data extracted from the literature \cite{saito_structure_2015} which is obtained using the tail representation of WFAT. In both figures, the pc-4 basis is adopted in the calculations, and $l_{\rm{max}}$ is set to the default value of 10. The ``grid\_level'' labels denote the input parameter \texttt{``atom\_grid\_level''} of the program. Here, grid levels 1, 3, 5, and 7 correspond to radial and angular sizes (40, 194), (75, 302), (105, 770), and (135, 1202) for each spherical grid around the nuclei, respectively. It is clear from the figures that for \texttt{``atom\_grid\_level''} larger than 3, the obtained results are hardly distinguishable from each other even after enlargement, which reveals a stable and fast convergence of the present program. In addition, the converged result is close to the reference data. This illustrates that the calculation of the molecular structure factor is able to achieve accurate results under default parameters. Minor discrepancy from the reference data results from the difference in the tail and integral presentations of WFAT and the choice of basis. %\red{(The reference paper \cite{saito_structure_2015} didn't provide info on basis choice.)}
+Now we present convergence and reliability tests of the program in Figs.~\ref{fig:convtest_N2} and \ref{fig:convtest_CO} with N$_2$ and CO molecules, respectively. To this end, we obtain their structure factors as a function of $\beta$ and compare the results to reference data extracted from the literature \cite{saito_structure_2015} which is obtained using the tail representation of WFAT. In both figures, the pc-4 basis is adopted in the calculations, and \cyan{the cut-off limit of the index $l$ in the summation of Eq.~(\ref{eq:StructFactorExpInt}) , i.e., the } $l_{\rm{max}}$, is set to the default value of 10. The ``grid\_level'' labels denote the input parameter \texttt{``atom\_grid\_level''} of the program. Here, grid levels 1, 3, 5, and 7 correspond to radial and angular sizes (40, 194), (75, 302), (105, 770), and (135, 1202) for each spherical grid around the nuclei, respectively. It is clear from the figures that for \texttt{``atom\_grid\_level''} larger than 3, the obtained results are hardly distinguishable from each other even after enlargement, which reveals a stable and fast convergence of the present program. In addition, the converged result is close to the reference data. This illustrates that the calculation of the molecular structure factor is able to achieve accurate results under default parameters. Minor discrepancy from the reference data results from the difference in the tail and integral presentations of WFAT and the choice of basis.
 
 \begin{figure}[tb]
     \centering
@@ -323,7 +349,7 @@ Now we present convergence and reliability tests of the program in Figs.~\ref{fi
 \label{sec:example}
 % ==========================
 
-In this section we take a number of common molecules as examples, and present their structure factors obtained from \texttt{PyStructureFactor}. The examples cover molecules with various properties, as shown in Figs.~\ref{fig:example_H2} to \ref{fig:example_C6H6}: diatomic molecules ($\rm{H}_2$, $\rm{CO}$, and $\rm{O}_2$), linear polyatomic molecules ($\rm{C}_2\rm{H}_2$) and planar molecules ($\rm{C}_6\rm{H}_6$); multiplet molecules ($\rm{O}_2$ and $\rm{C}_6\rm{H}_6$); molecules with degenerate HOMOs (double HOMO degeneracy for $\rm{O}_2$, $\rm{C}_2\rm{H}_2$ and $\rm{C}_6\rm{H}_6$).
+In this section we take a number of common molecules as examples, and present their structure factors obtained from \texttt{PyStructureFactor}. The examples cover molecules with various properties, as shown in Figs.~\ref{fig:example_H2} to \ref{fig:example_C6H6}: diatomic molecules ($\rm{H}_2$, $\rm{CO}$, and $\rm{O}_2$), linear polyatomic molecules ($\rm{C}_2\rm{H}_2$) and planar molecules ($\rm{C}_6\rm{H}_6$); \cout{multiplet} \cyan{open-shell} molecules ($\rm{O}_2$ \cout{and $\rm{C}_6\rm{H}_6$}); molecules with degenerate HOMOs (double HOMO degeneracy for $\rm{O}_2$, $\rm{C}_2\rm{H}_2$ and $\rm{C}_6\rm{H}_6$).
 
 For all examples presented, we set the input parameter $l_{\rm{max}}$ to the default value of 10 and set the \texttt{``atom\_grid\_level''} parameter to the default value of 3.
 For linear molecules, the $\gamma$ dependence of the structure factor drops out and it only depends on $\beta$. For nonlinear molecules, on the other hand, the structure factor is presented on the $(\beta,\gamma)$ grid, see Fig.~\ref{fig:example_C6H6} for an example of the $\rm{C}_6\rm{H}_6$ molecule.
