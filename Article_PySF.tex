@@ -73,7 +73,7 @@ Molecular structure factor; Tunneling ionization; Weak-field asymptotic theory; 
 {\em Nature of problem:} The structure factor of a molecule in intense laser fields determines its orientation-dependent tunneling ionization rate, which is crucial for the studies of ultrafast molecular dynamics and its control. However, the strong-field community lacks an open-source code to calculate the molecular structure factor, and can only resort to known results of a few molecules. \\
 {\em Solution method:} We develope the \texttt{PyStructureFactor} program with the structure factor of arbitrary molecules calculated using the weak-field asymptotic theory in the integral representation. The underlying electronic structure necessary for the calculation is obtained using the \texttt{PySCF} quantum chemistry package. \\
 {\em Restrictions on the Accuracy:} The accuracy of the molecular structure factor calculated by \texttt{PyStructureFactor} is restricted by the level of precision of the electronic structure information extracted from the \texttt{PySCF} package. \\
-\cyan{{\em Running time:} The running time depends on the size of the molecule and the basis set of the SCF calculation and other parameters passed to the program. The example in Fig.~\ref{fig:code_example} took 1.2 sec. on an AMD Ryzen 9 7950X CPU on the WSL Ubuntu 22.04 LTS.}
+\cyan{{\em Running time:} The running time depends on the size of the molecule and the basis set of the SCF calculation and other parameters passed to the program. The example in Fig.~\ref{fig:code_example} took 1.2 sec. to finish on an AMD Ryzen 9 7950X CPU on the WSL Ubuntu 22.04 LTS.}
 \end{small}
 
 
@@ -278,7 +278,8 @@ vanishes, which reduces the grid size required for the integral Eq.~(\ref{eq:Int
                                                                                                                                                 & \texttt{'RHF'}    \\
         \texttt{atom\_grid\_level}  & Level of fineness of the grid used in integration
                                       (see also \href{https://pyscf.org/pyscf_api_docs/pyscf.dft.html#module-pyscf.dft.gen_grid}{\texttt{pyscf.dft.Grid}}),
-                                      which controls the number of radial and angular grids, ranging from 0 to 9.
+                                      which controls the number of radial and angular grids \cyan{around each atom in the evaluation of the integration},
+                                      ranging from 0 to 9.
                                                                                                                                                 & \texttt{3}        \\
         \texttt{orient\_grid\_size} & Size of the output $(\beta,\gamma)$ grid.
                                       The grid is uniform, with $\beta$ ranging from $0$ to $\pi$ and $\gamma$ ranging from $0$ to $2\pi$.
