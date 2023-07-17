@@ -10,7 +10,7 @@
 \noindent
 Dear Editor,
 
-Thank you for sending us the Referee reports, and we also acknowledge the Referees for their careful review, as well as the questions and comments which contributed to the motivation of improvements to our revised manuscript.
+Thank you for sending us the Referee reports, and we also acknowledge the Referees for their careful review, as well as the questions and comments which contributed to improvements to our revised manuscript.
 
 We have highlighted our changes in cyan in the revised manuscript.
 Attached below is our response to the Referees' questions and comments point by point.
@@ -67,8 +67,12 @@ Note that the present SCF is based on HF, and it is not a high-precision simulat
 
 \vspace{1em}
 
-We acknowledge that the HF is not a high-precision method and have removed the `high accuracy' in our manuscript.
-However, we would like to emphasize that the accuracy of our result is already aligned with those obtained in the literature.
+We acknowledge that the HF is not a high-precision method and have rephrased `high accuracy' in our manuscript.
+However, we would like to emphasize that the accuracy of our result already aligns with those reported in the literature.
+
+In addition, we have added another feature in our code by making the method for electronic structure calculations flexible.
+Now, users can freely switch between HF methods or CASSCF methods to compute the molecular orbital, the latter of which would substantially improve the level of accuracy of our code.
+Thereby, our code features now flexible control of accuracy.
 
 \vspace{2em}
 
@@ -83,7 +87,7 @@ However, we would like to emphasize that the accuracy of our result is already a
 Thanks for pointing out this issue.
 We have added the following in the program summary:
 
-{\em ``Running time: The running time depends on the size of the molecule and the basis set of the SCF calculation and other parameters passed to the program. The example in Fig. 2 took 1.2 sec. to finish on an AMD Ryzen 9 7950X CPU on the WSL Ubuntu 22.04 LTS.''}
+{\em ``Running time: The running time depends on the size of the molecule, the basis set of the calculation, the level of precision of the electronic structure calculations, and other parameters passed to the program. The example in Fig.~2 took 1.2 seconds to finish on an AMD Ryzen 9 7950X CPU on the WSL Ubuntu 22.04 LTS.''}
 
 \vspace{2em}
 
@@ -150,8 +154,7 @@ Page 11, first paragraph: why is C6H6 (benzene) labeled a "multiplet molecule"? 
 
 \vspace{1em}
 
-We thank the Referee for pointing out our mistakes, we are sorry for it.
-According to the Referee's suggestion, we have revised our expression and corrected the mistakes.
+We thank the Referee for pointing out the mistakes, and we have revised the manuscript accordingly.
 
 \vspace{2em}
 
@@ -226,7 +229,7 @@ Table 2 is not fully visible in my pdf; however, in table 2, some of the paramet
 \vspace{1em}
 
 We are sorry for the inconvenience. We have adjusted the column widths of Table 2 to make it fully visible.
-As for the description about the parameters, we have modified our expressions in Table 2 in order for a clearer understanding of the parameters.
+As for the description about the parameters, we have modified our expressions in Table 2 for a clearer explanation of the parameters.
 \cyan{``see also my point above to the choice of the coordinate/reference system'' (what does it mean???)}
 
 \vspace{2em}
@@ -240,13 +243,13 @@ Also, the grid levels, e.g. shortly discussed on page 10 (grid levels 1,3,5,7, .
 
 \vspace{1em}
 
-The grid we used to evaluate the integrations is actually adopted from the pyscf.
-The pyscf uses a level number from 0 to 9 to control the fineness of the spherical grid (i.e., atom\_grid\_level in our software),
+The grid we used to evaluate the integrations is actually inherited from the \texttt{PySCF} package.
+The \texttt{PySCF} uses a level number from 0 to 9 to control the fineness of the spherical grid (i.e., atom\_grid\_level in our software),
 for each fineness level, it uses the corresponding radial and angular sizes of the grid.
-For example, for the nitrogen molecule (N2) we mentioned in Fig. 3, level 1 indicates radial and angular sizes of (40,194), that is, there are 40 points on the radial grid and 194 points on the angular grid of each N atom.
+For example, for the nitrogen molecule (N$_2$) we mentioned in Fig. 3, level 1 indicates radial and angular sizes of (40,194), that is, there are 40 points on the radial grid and 194 points on the angular grid of each N atom.
 
-As for the grid levels present in the Figs. 3 and 4, we didn't display the results under all levels from 0 to 9 simply because the lines would mess up with each other and make the diagram hard to read.
-Any level from 0 to 9 is accepted in the program if you want to use other levels.
+As for the grid levels present in the Figs. 3 and 4, we didn't display the results under all levels from 0 to 9 simply because the figure would otherwise be too busy to read.
+Any level from 0 to 9 is accepted in the program and the users are free to choose other levels.
 
 % ======================================================================
 
