@@ -276,6 +276,8 @@ vanishes, which reduces the grid size required for the integral Eq.~(\ref{eq:Int
         \texttt{hf\_method}         & Indicates whether \texttt{'RHF'} or \texttt{'UHF'} should be used in the molecular HF calculation.
                                       Note: \texttt{'UHF'} must be used for \cout{multiplet} \cyan{open-shell} molecules.
                                                                                                                                                 & \texttt{'RHF'}    \\
+        \cyan{\texttt{casscf\_conf}}& \cyan{Configuration of CASSCF calculation consisting of \texttt{(n\_active\_orb, n\_active\_elec)}.
+                                      Specifying \texttt{None} (by default) indicates employing HF instead of CASSCF.}                          & \cyan{\texttt{None}}\\
         \texttt{atom\_grid\_level}  & Level of fineness of the grid used in integration
                                       (see also \href{https://pyscf.org/pyscf_api_docs/pyscf.dft.html#module-pyscf.dft.gen_grid}{\texttt{pyscf.dft.Grid}}),
                                       which controls the number of radial and angular grids \cyan{around each atom in the evaluation of the integration},
