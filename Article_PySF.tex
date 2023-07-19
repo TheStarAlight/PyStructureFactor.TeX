@@ -71,7 +71,7 @@ Molecular structure factor; Tunneling ionization; Weak-field asymptotic theory; 
 {\em Programming language:} Python 3                                  \\
 {\em Supplementary material:}                                 \\
 {\em Nature of problem:} The structure factor of a molecule in intense laser fields determines its orientation-dependent tunneling ionization rate, which is crucial for the studies of ultrafast molecular dynamics and its control. However, the strong-field community lacks an open-source code to calculate the molecular structure factor, and can only resort to known results of a few molecules. \\
-{\em Solution method:} We develope the \texttt{PyStructureFactor} program with the structure factor of arbitrary molecules calculated using the weak-field asymptotic theory in the integral representation. The underlying electronic structure necessary for the calculation is obtained using the \texttt{PySCF} quantum chemistry package. \\
+{\em Solution method:} We developed the \texttt{PyStructureFactor} program with the structure factor of arbitrary molecules calculated using the weak-field asymptotic theory in the integral representation. The underlying electronic structure necessary for the calculation is obtained using the \texttt{PySCF} quantum chemistry package. \\
 {\em Restrictions on the Accuracy:} The accuracy of the molecular structure factor calculated by \texttt{PyStructureFactor} is restricted by the level of precision of the electronic structure information extracted from the \texttt{PySCF} package. \\
 \cyan{{\em Running time:} The running time depends on the size of the molecule, the basis set of the calculation, the level of precision of the electronic structure calculations, and other parameters passed to the program. The example in Fig.~\ref{fig:code_example} took 1.2 seconds to finish on an AMD Ryzen 9 7950X CPU on the WSL Ubuntu 22.04 LTS.}
 \end{small}
@@ -170,7 +170,7 @@ where $\rm{M}(a, b, x)$ is the confluent hyper-geometric function \cite{olver_ni
 \begin{align}
     \omega_l^\nu = & \      (-1)^{l+(\abs{m}-m)/2+1}\ 2^{l+3/2}\ \kappa^{Z/\kappa-(\abs{m}+1)/2-n_\xi} \nonumber \\
                    & \times \sqrt{(2l+1)(l+m)!(l-m)!(\abs{m}+n_\xi)!n_\xi!}\ \frac{l!}{(2l+1)!} \nonumber \\
-                   & \times \!\!\!\!\!\! \sum_{k=0}^{\min{(n_\xi,l-\abs{m})}} \!\!\!\!\!\!\!\!\!\! \frac{\Gamma(l+1-Z/\kappa+n\xi-k)}{k!(l-k)!(\abs{m}+k)!(l-\abs{m}-k)!(n_\xi-k)!}.
+                   & \times \!\!\!\!\!\! \sum_{k=0}^{\min{(n_\xi,l-\abs{m})}} \!\!\!\!\!\!\!\!\!\! \frac{\Gamma(l+1-Z/\kappa+n_\xi-k)}{k!(l-k)!(\abs{m}+k)!(l-\abs{m}-k)!(n_\xi-k)!}.
 \end{align}
 
 Under the framework of the HF method, the HF potential $\cyan{V}(\bn{r})$ consists of three parts, namely the nuclear Coulomb potential ($V_{\rm{nuc}}$), the direct ($V_{\rm{d}}$) and exchange ($V_{\rm{ex}}$) parts of inter-electron interactions:
@@ -246,8 +246,8 @@ vanishes, which reduces the grid size required for the integral Eq.~(\ref{eq:Int
                                       Refer to \href{https://pyscf.org/pyscf_api_docs/pyscf.gto.basis.html}{\texttt{pyscf.gto.basis}}
                                       for more information.
                                       An accurate basis set is suggested for optimal convergence.                                       & \texttt{'sto-3g'}\\
-        \texttt{charge}             & Charge of the molecule or molecular ion.                                                          & 0 \\
-        \texttt{spin}               & Number of spin (i.e., $2S$) of the molecule.                                                      & 0 \\
+        \texttt{charge}             & Charge of the molecule or molecular ion.                                                          & \texttt{0} \\
+        \texttt{spin}               & Number of spin (i.e., $2S$) of the molecule.                                                      & \texttt{0} \\
         \hline \hline
     \end{tabular}
     \caption{Essential input parameters of the \texttt{pyscf.M} method in the \texttt{PyStructureFactor} program.}
